@@ -1,0 +1,9 @@
+
+.tiles {
+    background-color: var(--potter-green);
+    width: 95%;
+    color: white;
+    font-weight: 800;
+    align-self: center;
+    justify-content: center;
+}

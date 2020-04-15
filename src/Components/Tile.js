@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { faEye as faReEye } from '@fortawesome/free-regular-svg-icons';
 // import ls from 'local-storage';
+import axios from 'axios';
 
 class Tile extends React.Component {
     constructor(props) {
@@ -36,6 +37,24 @@ class Tile extends React.Component {
             isSeen: this.state.isSeen
         });
         this.props.action();
+        async function getUser() {
+            try {
+                const response = await axios.get('/user?ID=12345');
+                console.log(response);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        async function postUser() {
+            try {
+                const res = await axios.post('/user', {
+                    seen: this.state.isSeen
+                });
+                console.log(res)
+            } catch (err) {
+                console.log(err)
+            }
+        }
     }
     saveAudioTime() {
         let player = document.getElementById("audio");

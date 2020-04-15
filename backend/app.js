@@ -27,8 +27,8 @@ const getAPI = async () => {
         },
         json: true // Automatically parses the JSON string in the response
     };
-    const res = await rp(`${endpoint}`)
-    let data;
+    // const res = await rp(`${endpoint}`)
+    // let data;
     rp(options)
         .then(function (sermons) {
             console.log(sermons[0])

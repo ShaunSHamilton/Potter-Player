@@ -1,45 +1,62 @@
 require('dotenv').config()
-const rp = require('request-promise');
+const axios = require('axios');
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-const endpoint = "https://raw.githubusercontent.com/Sky020/Potter-Player/master/src/data/sermon_data.json";
-
-/**Create a 'Person' Model */
-var sermonSchema = new mongoose.Schema({
+const express = require('express');
+const app = express();
+// ----------------------------------------------------------------------
+// Setup Mongoose Schema connection
+// ----------------------------------------------------------------------
+try {
+    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+} catch (error) {
+    console.log(error)
+}
+let sermonSchema = new mongoose.Schema({
     title: String,
-    _id: Number,
     speaker: String,
     date: String,
     category: String,
     audio: String,
-    image: String,
     seen: { type: Boolean, default: false }
 });
-
-/**Create and Save a Sermon */
-var Sermon = mongoose.model('Sermon', sermonSchema);
-
-const getAPI = async () => {
-    let options = {
-        uri: endpoint,
-        headers: {
-            'User-Agent': 'Request-Promise'
-        },
-        json: true // Automatically parses the JSON string in the response
-    };
-    // const res = await rp(`${endpoint}`)
-    // let data;
-    rp(options)
-        .then(function (sermons) {
-            console.log(sermons[0])
-            let arrayOfSermons = sermons.map((sermon) => {
-                return { title: sermon.title, _id: sermon.id, speaker: sermon.speaker, date: sermon.date, category: sermon.category, audio: sermon.audio, image: sermon.img, seen: false }
-            });
-            createManySermons(arrayOfSermons)
-        })
-        .catch(function (err) {
-            console.log(err)
+let Sermon = mongoose.model('Sermon', sermonSchema);
+// ----------------------------------------------------------------------
+// Create Routes for Express and Axios
+// ----------------------------------------------------------------------
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/src/index.js');
+});
+app.get('/update', (req, res) => {
+    res.json({ "message": "Hello json" });
+});
+app.route('/name').get((req, res, next) => {
+    //let first = req.query.first;
+    //console.log(req.query);
+    //req.query = '?first=firstname&last=lastname';
+    res.json({ name: `${req.query.first} ${req.query.last}` });
+    next()
+}).post((req, res, next) => {
+    //console.log(req.body)
+    res.json({ name: `${req.body.first} ${req.body.last}` });
+    next();
+});
+// ----------------------------------------------------------------------
+// DataBase Querying Functions
+// ----------------------------------------------------------------------
+function findSermon() {
+    let findSermonByTitle = function (sermonTitle, done) {
+        console.log(sermonTitle)
+        Sermon.find({ title: sermonTitle }, function (err, found) {
+            if (err) return console.log(err);
+            done(null, found);
         });
+    };
+}
+
+function updateDB() {
+    // Find last added sermon (findbyDate)
+
+    // Check for more sermons, and save new sermons
     const createManySermons = function (arrayOfSermons, done) {
         Sermon.create(arrayOfSermons, function (err, sermon) {
             if (err) return console.error("4 ", err);
@@ -47,26 +64,77 @@ const getAPI = async () => {
         });
     };
 }
-getAPI();
-// var createAndSavePerson = function (done) {
-//     var janeFonda = new Person({ name: "Jane Fonda", age: 84, favoriteFoods: ["vodka", "air"] });
 
-//     janeFonda.save(function (err, data) {
-//         if (err) return console.error("3 ", err);
-//         done(null, data)
-//     });
-// };
-// let createAndSaveSermon = (done) => {
-// }
+function CreateSermonDB() {
 
-/**Create many Sermons with `Model.create()` */
+    let pages = [];
+    let sermons = [];
+    let titles = [];
+    let speakers = [];
+    let categories = [];
+    let dates = [];
+    let audios = [];
 
+    function getPages() {
+        axios(url)
+            .then((html) => {
+                const $ = cheerio.load(html.data)
+                let numberOfPages = $('#cmsmasters_sermons_5e960f113c712 > div > div > ul > li:nth-child(5) > a').text()
+                for (let i = 1; i < numberOfPages + 1; i++) {
+                    pages.push(url + 'page/' + String(i));
+                }
+                getAllData()
+            })
+            .catch(console.error);
+    }
 
-/**Use `Model.find()` */
-// var findPeopleByName = function(personName, done) {
-//   console.log(personName)
-//   Person.find({name: personName}, function(err, found) {
-//     if (err) return console.log("5 ",err);
-//     done(null, found);
-//   });
-// };
+    function getAllData() {
+        pages.forEach(page => {
+            axios(page)
+                .then(html => {
+                    const $ = cheerio.load(html.data);
+                    let refs = $('article > h3 > a');
+                    let tempDates = $('article > abbr');
+                    let tempAudios = $('a.cmsmasters_sermon_media_item.cmsmasters_theme_icon_sermon_download');
+                    let tempSpeakers = $('div.cmsmasters_sermon_author > a > span');
+                    let tempCategories = $('div.cmsmasters_sermon_cat > a');
+                    for (let ref in refs) {
+                        if (!isNaN(ref)) {
+                            sermons.push(refs[ref].attribs.href)
+                            titles.push(refs[ref].children[0].data)
+                            audios.push(tempAudios[ref].attribs.href)
+                            dates.push(tempDates[ref].attribs.title)
+                            speakers.push(tempSpeakers[ref].children.data)
+                            categories.push(tempCategories[ref].children.data)
+                        }
+                    }
+                }).then(createMany())
+                .catch(console.error)
+        })
+    }
+
+    const createMany = async () => {
+        let sermonData = [];
+        for (let i = 0; i < sermons.length; i++) {
+            sermonData.push({
+                title: titles[i],
+                speaker: speakers[i],
+                date: dates[i],
+                category: categories[i],
+                audio: audios[i]
+            });
+        }
+        let arrayOfSermons = sermonData.map((sermon) => {
+            return { title: sermon.title, speaker: sermon.speaker, date: sermon.date, category: sermon.category, audio: sermon.audio, seen: false }
+        });
+        createManySermons(arrayOfSermons)
+
+        const createManySermons = function (arrayOfSermons, done) {
+            Sermon.create(arrayOfSermons, function (err, sermon) {
+                if (err) return console.error(err);
+                done(null, sermon);
+            });
+        };
+    }
+
+}

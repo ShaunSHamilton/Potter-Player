@@ -1,0 +1,17 @@
+:root {
+  --main-bg-color: #555;
+  --main-font: black;
+  --potter-orange: #f79f1c;
+  --potter-red: #dc2b26;
+  --potter-green: #0f5e9b;
+}
+
+.app {
+  background-color: var(--potter-green);
+  width: 100%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

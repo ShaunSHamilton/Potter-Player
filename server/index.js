@@ -9,12 +9,12 @@ app.use(express.static("../client/index.js"));
 app.use(bodyParser.json());
 
 // DB Config
-const db = require('./.env').mongoURI;
+require('dotenv').config();
 
 // Connect to MongoDB
 mongoose
-    .connect(db)
-    .then(()=> console.log('MongoDB is successfully connected'))
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB is successfully connected'))
     .catch(err => console.log(err));
 
 const port = process.env.PORT || 5000;

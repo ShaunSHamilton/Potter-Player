@@ -1,7 +1,7 @@
 {
-    "name": "simple-mern-stack",
+    "name": "potter-player",
     "version": "1.0.1",
-    "description": "Simple MERN Stack Boilerplate",
+    "description": "A React App to play Potter's Wheel sermons",
     "main": "server/index.js",
     "scripts": {
         "babel-node": "babel-node ./server/index.js",
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/arravind-r/simple-mern-stack.git"
+        "url": "git+https://github.com/sky020/potter-player.git"
     },
     "keywords": [
         "MERN Stack",
@@ -21,18 +21,11 @@
         "Node.js",
         "stack",
         "mern",
-        "boilerplate",
-        "mern",
         "stack",
-        "fullstack",
-        "boilerplate"
+        "fullstack"
     ],
-    "author": "arravind-r",
-    "license": "GPL-3.0",
-    "bugs": {
-        "url": "https://github.com/arravind-r/simple-mern-stack/issues"
-    },
-    "homepage": "https://github.com/arravind-r/simple-mern-stack#readme",
+    "author": "Shaun Hamilton",
+    "license": "MIT",
     "devDependencies": {
         "@babel/cli": "^7.1.2",
         "@babel/core": "^7.1.2",

@@ -1,7 +1,7 @@
 {
-    "name": "simple-mern-stack-client",
+    "name": "potter-player-client",
     "version": "1.0.1",
-    "description": "A Simple MERN Stack Boilerplate",
+    "description": "A React App to play Potter's Wheel sermons",
     "main": "index.js",
     "scripts": {
         "set_env_dev": "SET \"NODE_ENV=dev\"",
@@ -40,11 +40,9 @@
         "react",
         "reactjs",
         "MERN Stack",
-        "MERN boilerplate",
         "fullstack",
-        "mern stack boilerplate",
         "express",
         "nodejs"
     ],
-    "author": "arravind-r"
+    "author": "Shaun Hamilton"
 }

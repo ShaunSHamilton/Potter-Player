@@ -1,7 +1,7 @@
 import React from 'react';
 import './src/styles/App.css';
 import Tiles from './src/Components/Tiles';
-//import { getAllSermons } from '../../server/app';
+import axios from 'axios';
 
 
 class App extends React.Component {
@@ -14,15 +14,21 @@ class App extends React.Component {
 
   componentDidMount() {
     const getAPI = async () => {
-      const res = await getAllSermons();
-      const data = await res.json();
-      this.setState({
-        response: data,
-        filteredData: data,
-        isLoading: false,
-      });
+      try {
+        // let res = await axios.get('http://localhost:5000/updateDB')
+        // console.log(res);
+        const res = await axios.get('http://localhost:5000/');
+        const data = await res.data
+        this.setState({
+          response: data,
+          filteredData: data,
+          isLoading: false,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     }
-    //getAPI();
+    getAPI();
   }
 
   render() {

@@ -61,7 +61,7 @@ const Tiles = (props) => {
                 <label>Sort by</label>
                 <input id="btn-unseen" type="button" name="unseen" value="Unseen" onClick={searchSeen}></input>
             </div>
-            {tileData.map((x) => <Tile action={playerHandle} audioPlaying={audioPlaying} key={x.id} data={x} />)}
+            {tileData.map((x) => <Tile action={playerHandle} audioPlaying={audioPlaying} key={x._id} data={x} />)}
             {isFetching && <h3>Fetching Data</h3>}
         </div>
     );

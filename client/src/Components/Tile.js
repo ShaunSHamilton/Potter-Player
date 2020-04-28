@@ -1,8 +1,7 @@
 import React from 'react';
 import '../styles/Tile.css';
-import eyeRegular from '../../../public/eye-regular';
-import eyeSolid from '../../../public/eye-solid';
-// import ls from 'local-storage';
+// import eyeRegular from '../../../public/eye-regular';
+// import eyeSolid from '../../../public/eye-solid';
 import axios from 'axios';
 
 class Tile extends React.Component {
@@ -44,16 +43,6 @@ class Tile extends React.Component {
                 console.error(error);
             }
         }
-        async function postUser() {
-            try {
-                const res = await axios.post('/user', {
-                    seen: this.state.isSeen
-                });
-                console.log(res)
-            } catch (err) {
-                console.log(err)
-            }
-        }
     }
     saveAudioTime() {
         let player = document.getElementById("audio");
@@ -86,7 +75,7 @@ class Tile extends React.Component {
                     </div>
                 </div>
                 <div className="icon" onClick={this.toggleSeen}>
-                    <img className="eye" src={this.state.isSeen ? eyeSolid : eyeRegular}></img>
+                    {/* <img className="eye" src={this.state.isSeen ? eyeSolid : eyeRegular}></img> */}
                 </div>
 
                 {(this.state.isClicked && !this.state.audioPlaying) &&
